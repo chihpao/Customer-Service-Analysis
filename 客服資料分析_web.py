@@ -28,27 +28,31 @@ def check_password():
     # 載入使用者資料
     if "users" not in st.session_state:
         try:
-            # 嘗試從檔案載入使用者資料
-            users_file = os.path.join(os.path.dirname(__file__), "users.json")
-            if os.path.exists(users_file):
-                with open(users_file, "r") as f:
-                    st.session_state["users"] = json.load(f)
+            # 嘗試從 Streamlit Secrets 載入使用者資料
+            if 'users' in st.secrets:
+                st.session_state["users"] = st.secrets["users"]
             else:
-                # 如果檔案不存在，創建預設使用者
-                st.session_state["users"] = {
-                    "admin": {
-                        "password": hashlib.sha256(str.encode("admin123")).hexdigest(),
-                        "role": "admin"
+                # 如果 Secrets 中沒有使用者資料，嘗試從本地檔案載入
+                users_file = os.path.join(os.path.dirname(__file__), "users.json")
+                if os.path.exists(users_file):
+                    with open(users_file, "r") as f:
+                        st.session_state["users"] = json.load(f)
+                else:
+                    # 如果檔案不存在，創建預設使用者
+                    st.session_state["users"] = {
+                        "chihpao": {
+                            "password": "3a78c2a41af38053eabf7ac5d8c3cae96912b27452819b3ddef48ba67e8e76e5",
+                            "role": "admin"
+                        }
                     }
-                }
-                # 儲存預設使用者資料
-                with open(users_file, "w") as f:
-                    json.dump(st.session_state["users"], f)
+                    # 儲存預設使用者資料到本地檔案（僅開發環境使用）
+                    with open(users_file, "w") as f:
+                        json.dump(st.session_state["users"], f)
         except Exception as e:
             # 如果發生錯誤，使用硬編碼的預設使用者
             st.session_state["users"] = {
-                "admin": {
-                    "password": hashlib.sha256(str.encode("admin123")).hexdigest(),
+                "chihpao": {
+                    "password": "3a78c2a41af38053eabf7ac5d8c3cae96912b27452819b3ddef48ba67e8e76e5",
                     "role": "admin"
                 }
             }
@@ -93,6 +97,28 @@ def user_management():
     if st.session_state["user_role"] != "admin":
         st.error("您沒有權限訪問此頁面")
         return
+        
+    # 顯示 Streamlit Secrets 設定說明
+    st.info("""
+    ### 重要安全提示
+    
+    在本地環境中，使用者資料會儲存在 `users.json` 檔案中。
+    但在 Streamlit Cloud 部署環境中，為了安全起見，請使用 Streamlit Secrets 管理使用者認證資訊。
+    
+    在 Streamlit Cloud 中設定 Secrets 的步驟：
+    1. 登入 Streamlit Cloud
+    2. 前往您的應用程式設定
+    3. 點擊「Secrets」標籤
+    4. 添加以下格式的 Secrets：
+    ```
+    [users]
+    chihpao = {"password":"3a78c2a41af38053eabf7ac5d8c3cae96912b27452819b3ddef48ba67e8e76e5","role":"admin"}
+    user1 = {"password":"<雜湊後的密碼>","role":"user"}
+    ```
+    5. 點擊「Save」按鈕
+    
+    注意：在本地環境中新增或刪除的使用者不會自動同步到 Streamlit Cloud，您需要手動更新 Secrets。
+    """)
     
     st.subheader("現有使用者")
     users_df = pd.DataFrame([

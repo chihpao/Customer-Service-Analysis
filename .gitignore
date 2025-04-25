@@ -1,0 +1,20 @@
+# 忽略使用者認證檔案
+users.json
+
+# Python 快取檔案
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 本地環境檔案
+.env
+.venv
+env/
+venv/
+
+# 圖片和資料檔案
+*.png
+*.jpg
+*.jpeg
+*.gif
+charts/
