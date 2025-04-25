@@ -18,3 +18,8 @@ venv/
 *.jpeg
 *.gif
 charts/
+
+# Excel 臨時檔案
+~$*
+*.tmp
+*.xlk
