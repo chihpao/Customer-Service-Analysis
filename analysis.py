@@ -57,9 +57,30 @@ def 分析單月資料():
                 # 創建日期統計圖表
                 fig, ax = plt.subplots(figsize=(14, 6))
                 日期統計.plot(kind='bar', ax=ax)
-                ax.set_title(f"{選擇的月份}月每日來電數量", fontsize=16)
-                ax.set_xlabel("日期", fontsize=12)
-                ax.set_ylabel("數量", fontsize=12)
+                
+                # 設定圖表標題和軸標籤的字型
+                try:
+                    # 導入字型管理模組
+                    import matplotlib.font_manager as fm
+                    
+                    # 創建字型屬性
+                    font_prop = fm.FontProperties(family=['Microsoft JhengHei', 'SimHei', 'Arial Unicode MS', 'sans-serif'])
+                    
+                    # 設定標題和軸標籤
+                    ax.set_title(f"{選擇的月份}月每日來電數量", fontsize=16, fontproperties=font_prop)
+                    ax.set_xlabel("日期", fontsize=12, fontproperties=font_prop)
+                    ax.set_ylabel("數量", fontsize=12, fontproperties=font_prop)
+                    
+                    # 設定 x 軸標籤的字型
+                    for label in ax.get_xticklabels():
+                        label.set_fontproperties(font_prop)
+                except Exception as e:
+                    # 如果設定字型失敗，使用默認設定
+                    ax.set_title(f"{選擇的月份}月每日來電數量", fontsize=16)
+                    ax.set_xlabel("日期", fontsize=12)
+                    ax.set_ylabel("數量", fontsize=12)
+                    st.warning(f"設定圖表字型時發生錯誤: {e}")
+                
                 ax.tick_params(axis='x', rotation=45)
                 plt.tight_layout()
                 st.pyplot(fig)
@@ -91,9 +112,30 @@ def 分析單月資料():
             # 創建歸類統計圖表
             fig, ax = plt.subplots(figsize=(14, 8))
             歸類統計.plot(kind='bar', ax=ax)
-            ax.set_title(f"{選擇的月份}月歸類統計", fontsize=16)
-            ax.set_xlabel("歸類", fontsize=12)
-            ax.set_ylabel("數量", fontsize=12)
+            
+            # 設定圖表標題和軸標籤的字型
+            try:
+                # 導入字型管理模組
+                import matplotlib.font_manager as fm
+                
+                # 創建字型屬性
+                font_prop = fm.FontProperties(family=['Microsoft JhengHei', 'SimHei', 'Arial Unicode MS', 'sans-serif'])
+                
+                # 設定標題和軸標籤
+                ax.set_title(f"{選擇的月份}月歸類統計", fontsize=16, fontproperties=font_prop)
+                ax.set_xlabel("歸類", fontsize=12, fontproperties=font_prop)
+                ax.set_ylabel("數量", fontsize=12, fontproperties=font_prop)
+                
+                # 設定 x 軸標籤的字型
+                for label in ax.get_xticklabels():
+                    label.set_fontproperties(font_prop)
+            except Exception as e:
+                # 如果設定字型失敗，使用默認設定
+                ax.set_title(f"{選擇的月份}月歸類統計", fontsize=16)
+                ax.set_xlabel("歸類", fontsize=12)
+                ax.set_ylabel("數量", fontsize=12)
+                st.warning(f"設定圖表字型時發生錯誤: {e}")
+                
             ax.tick_params(axis='x', rotation=45)
             plt.tight_layout()
             st.pyplot(fig)
